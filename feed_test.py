@@ -1,5 +1,6 @@
 from enum import Enum
 import numpy as np
+# import matplotlib.pyplot as plt
 print("aicutie feed text start")
 
 class OperationType(Enum):
@@ -24,6 +25,8 @@ operation_type_score_dict = [
     {'type': OperationType.PLAN_TASK, 'score': 0.3},
 ]
 
+final_output_array = []
+
 # 生成10个0~OperationType.NUM_OPERATION_TYPE-1 以内的随机数
 input_seq_array = np.random.randint(0, OperationType.NUM_OPERATION_TYPE.value, 10)
 print("input_seq_array: ", input_seq_array)
@@ -37,5 +40,10 @@ for i in range(0, len(input_seq_array)):
             print("operation_type_score_dict[", j, "]['score']: ", operation_type_score_dict[j]['score'])
             total_score += operation_type_score_dict[j]['score']
             break
-    
+
+final_output_array.append(total_score)
+
 print("total_score: ", total_score)
+
+print(final_output_array)
+
