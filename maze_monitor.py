@@ -54,9 +54,22 @@ class Maze(QWidget):
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ]
 
+        self.maze_specified_pos_policy_dict = {
+            (1, 1): [0, 0, 0, 1],
+            (1, 8): [0, 1, 0, 0],
+        }
+
+
         self.policy = np.zeros((len(self.maze), len(self.maze[0]), 4))
         for i in range(len(self.maze)):
             for j in range(len(self.maze[i])):
+                if (i,j) in self.maze_specified_pos_policy_dict:
+                    print("i: ", i, "j: ", j, "policy: ", self.maze_specified_pos_policy_dict[(i,j)])
+                    self.policy[i][j][0] = self.maze_specified_pos_policy_dict[(i,j)][0]
+                    self.policy[i][j][1] = self.maze_specified_pos_policy_dict[(i,j)][1]
+                    self.policy[i][j][2] = self.maze_specified_pos_policy_dict[(i,j)][2]
+                    self.policy[i][j][3] = self.maze_specified_pos_policy_dict[(i,j)][3]
+                    continue
                 if self.maze[i][j] == 0:
                     self.policy[i][j][0] = 0.25
                     self.policy[i][j][1] = 0.25
@@ -139,6 +152,8 @@ class Maze(QWidget):
             # print("------", next_action, Next_Action_Type(next_action))
             self.print_next_action_name_by_enum_id(next_action)
             self.maze_auto_update_thread.signal_int.emit(next_action) 
+            if self.check_pos_arrive_end():
+                break
 
     def print_next_action_name_by_enum_id(self, action):
         if action == 0:
