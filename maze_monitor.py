@@ -37,6 +37,7 @@ class Maze(QWidget):
         self.maze_auto_update_thread = Maze_Auto_Update_Thread(self.auto_update_maze_action_thread_exec)
         self.maze_auto_update_thread.signal_int.connect(self.update_pose_with_next_action)
         self.maze_auto_update_thread.start()
+        self.step_counter = 0
 
     def initUI(self):
         self.setWindowTitle('Maze Game')
@@ -55,21 +56,21 @@ class Maze(QWidget):
         ]
 
         self.maze_specified_pos_policy_dict = {
-            (1, 1): [0, 0, 0, 1],
-            (1, 2): [0, 0, 0, 1],
-            (1, 3): [0, 0, 0, 1],
-            (1, 4): [0, 0, 0, 1],
-            (1, 5): [0, 0, 0, 1],
-            (1, 6): [0, 0, 0, 1],
-            (1, 8): [0, 1, 0, 0],
-            (2, 8): [0, 1, 0, 0],
-            (3, 8): [0, 1, 0, 0],
-            (4, 8): [0, 1, 0, 0],
-            (5, 8): [0, 1, 0, 0],
-            (6, 8): [0, 1, 0, 0],
-            (7, 8): [0, 0, 1, 0],
-            (7, 7): [0, 0, 1, 0],
-            (7, 6): [1, 0, 0, 0],
+            # (1, 1): [0.5, 0, 0, 0.5],
+            # (1, 2): [0, 0, 0, 1],
+            # (1, 3): [0, 0, 0, 1],
+            # (1, 4): [0, 0, 0, 1],
+            # (1, 5): [0, 0, 0, 1],
+            # (1, 6): [0, 0, 0, 1],
+            # (1, 8): [0, 1, 0, 0],
+            # (2, 8): [0, 1, 0, 0],
+            # (3, 8): [0, 1, 0, 0],
+            # (4, 8): [0, 1, 0, 0],
+            # (5, 8): [0, 1, 0, 0],
+            # (6, 8): [0, 1, 0, 0],
+            # (7, 8): [0, 0, 1, 0],
+            # (7, 7): [0, 0, 1, 0],
+            # (7, 6): [1, 0, 0, 0],
         }
 
 
@@ -155,19 +156,21 @@ class Maze(QWidget):
 
     def check_pos_arrive_end(self):
         if self.maze[self.player_pos.y()][self.player_pos.x()] == 2:
-            print("Arrive End")
+            print("Arrive End. Step Counter: ", self.step_counter)
             return True
         else:
             return False
 
     def generate_new_action_by_policy(self, policy):
         result = np.random.choice(4, 1, p=policy)
-        print("pos:", self.player_pos.x(), ",", self.player_pos.y(), "result", result[0])
+        # result = np.random.choice([0, 1, 2, 3], 1, [policy[0], policy[1], policy[2], policy[3]])
+        print("pos:", self.player_pos.x(), ",", self.player_pos.y(), "result", result[0], "policy:",  [policy[0], policy[1], policy[2], policy[3]])
         return result[0]
 
     def auto_update_maze_action_thread_exec(self):
         while True:
             time.sleep(0.1)
+            self.step_counter += 1
             # next_action = np.random.randint(0, 4)
             if self.check_pos_arrive_end():
                 break
