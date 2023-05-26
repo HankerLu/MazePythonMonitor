@@ -48,11 +48,20 @@ class Maze(QWidget):
             [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
             [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 2, 0, 1, 0, 1],
             [1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ]
+
+        self.policy = np.zeros((len(self.maze), len(self.maze[0]), 4))
+        for i in range(len(self.maze)):
+            for j in range(len(self.maze[i])):
+                if self.maze[i][j] == 0:
+                    self.policy[i][j][0] = 0.25
+                    self.policy[i][j][1] = 0.25
+                    self.policy[i][j][2] = 0.25
+                    self.policy[i][j][3] = 0.25
 
         self.player_pos = QPoint(1, 1)
 
@@ -70,6 +79,8 @@ class Maze(QWidget):
             for j in range(len(self.maze[i])):
                 if self.maze[i][j] == 1:
                     qp.fillRect(j*60, i*60, 60, 60, QBrush(Qt.black))
+                elif self.maze[i][j] == 2:
+                    qp.fillRect(j*60, i*60, 60, 60, QBrush(Qt.green))
 
     def drawPlayer(self, qp):
         qp.setBrush(QBrush(Qt.red))
@@ -107,6 +118,13 @@ class Maze(QWidget):
             if self.maze[self.player_pos.y()][self.player_pos.x()+1] == 0:
                 self.player_pos.setX(self.player_pos.x()+1)
         self.update()
+
+    def check_pos_arrive_end(self):
+        if self.maze[self.player_pos.y()][self.player_pos.x()] == 2:
+            print("Arrive End")
+            return True
+        else:
+            return False
 
     def auto_update_maze_action_thread_exec(self):
         while True:
