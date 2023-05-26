@@ -126,10 +126,16 @@ class Maze(QWidget):
         else:
             return False
 
+    def generate_new_action_by_policy(self, policy):
+        result = np.random.choice(4, 1, p=policy)
+        print("result", result[0])
+        return result[0]
+
     def auto_update_maze_action_thread_exec(self):
         while True:
             time.sleep(0.5)
-            next_action = np.random.randint(0, 4)
+            # next_action = np.random.randint(0, 4)
+            next_action = self.generate_new_action_by_policy(self.policy[self.player_pos.y()][self.player_pos.x()])
             # print("------", next_action, Next_Action_Type(next_action))
             self.print_next_action_name_by_enum_id(next_action)
             self.maze_auto_update_thread.signal_int.emit(next_action) 
